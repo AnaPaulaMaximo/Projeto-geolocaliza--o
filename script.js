@@ -120,3 +120,40 @@ function atualizaMapa(latitude,longitude){
     .bindPopup("📍 Você está aqui")
     .openPopup();
 }
+
+
+
+
+async function clima() {
+    // Obtém as coordenadas (certifique-se de definir essas variáveis antes)
+    if (typeof latitude === "undefined" || typeof longitude === "undefined") {
+        document.getElementById("resultado3").innerHTML = "⚠️ Primeiro obtenha as coordenadas!";
+        return;
+    }
+
+    try {
+        // Monta a URL da API
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+
+        // Faz a requisição à API
+        const resposta = await fetch(url);
+        if (!resposta.ok) throw new Error("Erro ao buscar dados do clima.");
+
+        // Transforma a resposta em JSON
+        const dados = await resposta.json();
+        console.log(dados);
+
+        // Obtém a temperatura corretamente
+        const temperatura = dados.current_weather?.temperature || "N/A";
+
+        // Exibe a temperatura
+        document.getElementById("resultado3").innerHTML = `
+            <h3>🌡Temprearura:</h3>
+            Temperatura: ${temperatura}°C<br>
+        `;
+
+    } catch (erro) {
+        console.error("Erro ao obter o clima:", erro);
+        document.getElementById("resultado3").innerHTML = "❌ Erro ao obter a temperatura.";
+    }
+}
